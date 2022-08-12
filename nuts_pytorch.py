@@ -80,11 +80,13 @@ SOFTWARE.
 
 """
 Changed to use PyTorch by Antti Honkela, 2018-10-10
-Updated copy-construction for newer versions of Pytorch by Arttu Pönni, 2022-08-12
+Updated copy-construction for newer versions of Pytorch
+and added a progress bar by Arttu Pönni, 2022-08-12
 """
 import torch
 import math
 import random
+from tqdm import tqdm
 
 
 def leapfrog(theta, r, grad, epsilon, f):
@@ -300,7 +302,7 @@ def nuts6(f, M, Madapt, theta0, delta=0.6):
     epsilonbar = torch.ones(1, device=device, dtype=dtype)
     Hbar = 0
 
-    for m in range(1, M + Madapt):
+    for m in tqdm(range(1, M + Madapt)):
         # Resample momenta.
         r0 = torch.normal(torch.zeros(D, device=device, dtype=dtype), 1.0)
 
