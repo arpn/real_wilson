@@ -80,6 +80,7 @@ SOFTWARE.
 
 """
 Changed to use PyTorch by Antti Honkela, 2018-10-10
+Updated copy-construction for newer versions of Pytorch by Arttu Pönni, 2022-08-12
 """
 import torch
 import math
@@ -121,8 +122,7 @@ def leapfrog(theta, r, grad, epsilon, f):
     rprime = r + 0.5 * epsilon * grad
     thetaprime0 = theta.data + epsilon * rprime.data
     # make new step in theta
-    thetaprime = torch.tensor(thetaprime0, requires_grad=True,
-                              device=device, dtype=dtype)
+    thetaprime = thetaprime0.clone().detach().to(dtype=dtype, device=device).requires_grad_(True)
     #compute new gradient
     logpprime = f(thetaprime)
     logpprime.backward()
@@ -280,7 +280,7 @@ def nuts6(f, M, Madapt, theta0, delta=0.6):
     samples = torch.empty((M + Madapt, D), dtype=dtype, device=device)
     lnprob = torch.empty(M + Madapt, dtype=dtype, device=device)
 
-    theta = torch.tensor(theta0, requires_grad=True, dtype=dtype, device=device)
+    theta = theta0.clone().detach().to(dtype=dtype, device=device).requires_grad_(True)
     logp = f(theta)
     logp.backward()
     grad = theta.grad

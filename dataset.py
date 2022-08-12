@@ -8,7 +8,7 @@ from constants import dtype
 
 
 class AdSBHDataset(Dataset):
-    def __init__(self, N=1000, threshold=0.01, coef=1.0, shift=0.0, file=None):
+    def __init__(self, N=1000, threshold=0.01, sigma_max=1.0, coef=1.0, shift=0.0, file=None):
         '''
         L, V, and sigma is understood to correspond to the
         dimensionless combinations T*L, V/T, and sigma/T.
@@ -23,7 +23,7 @@ class AdSBHDataset(Dataset):
         else:
             self.coef = coef
             self.shift = shift
-            self.L, self.V, self.sigma = self.gen_data(N, threshold)
+            self.L, self.V, self.sigma = self.gen_data(N, threshold, sigma_max)
 
     def __getitem__(self, index):
         return self.L[index], self.V[index], self.sigma[index]
@@ -31,7 +31,7 @@ class AdSBHDataset(Dataset):
     def __len__(self):
         return len(self.L)
 
-    def gen_data(self, N, threshold):
+    def gen_data(self, N, threshold, sigma_max):
         zs_max, L_max = self.get_L_max()
         zs_crit, L_crit = self.get_L_crit(zs_max)
         L_data = []
@@ -48,7 +48,7 @@ class AdSBHDataset(Dataset):
                 V = torch.tensor(0.0, dtype=dtype)
             L_data.append(L)
             V_data.append(V)
-            sigma_data.append(npr.uniform(0.1, 0.2))
+            sigma_data.append(npr.uniform(sigma_max / 2, sigma_max))
         L_data = torch.tensor(L_data, dtype=dtype)
         V_data = torch.tensor(V_data, dtype=dtype)
         sigma_data = torch.tensor(sigma_data, dtype=dtype)
