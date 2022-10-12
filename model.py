@@ -233,10 +233,10 @@ def integrate_L(a, b, zs):
     integrand = sqrtg / torch.sqrt(f_over_fs / ((1 - y)**4 * (1 + y)**4) - 1)
     integrand *= y
     # We extrapolate to y=0
-    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     deriv = (integrand[1] - integrand[0]) / (y[1] - y[0])
     integrand_0 = deriv * (-y[0]) + integrand[0]
     integrand = torch.cat((integrand_0.unsqueeze(-1), integrand))
+    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     # Add analytically known value at y=1
     y = torch.cat((y, torch.tensor([1.0], dtype=dtype)))
     integrand = torch.cat((integrand, torch.tensor([0.0], dtype=dtype)))
@@ -264,10 +264,10 @@ def integrate_dL(a, b, zs):
     integrand *= 2 * torch.sqrt(1 - z / zs) * torch.sqrt(g)
     integrand /= (zs**4 / z**4 * f_over_fs - 1)**1.5
     # Extrapolate to y=0
-    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     deriv = (integrand[1] - integrand[0]) / (y[1] - y[0])
     integrand_0 = deriv * (-y[0]) + integrand[0]
     integrand = torch.cat((integrand_0.unsqueeze(-1), integrand))
+    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     # Add known value for y=1
     y = torch.cat((y, torch.tensor([1.0], dtype=dtype)))
     integrand = torch.cat((integrand, torch.tensor([0.0], dtype=dtype)))
@@ -300,10 +300,10 @@ def integrate_V_connected(a, b, zs):
     integrand = torch.sqrt(fg) / ((1 - y)**2 * (1 + y)**2) * \
         (1 / torch.sqrt(1 - (1 - y)**4 * (1 + y)**4 / f_over_fs) - 1) * y
     # We extrapolate to y=0
-    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     deriv = (integrand[1] - integrand[0]) / (y[1] - y[0])
     integrand_0 = deriv * (-y[0]) + integrand[0]
     integrand = torch.cat((integrand_0.unsqueeze(-1), integrand))
+    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     # Add analytically known value at y=1
     y = torch.cat((y, torch.tensor([1.0], dtype=dtype)))
     integrand = torch.cat((integrand, torch.tensor([0.0], dtype=dtype)))
@@ -326,10 +326,10 @@ def integrate_V_disconnected(a, b, zs):
     fg = eval_f(a, z) * eval_g(b, z)
     integrand = torch.sqrt(fg) / z**2
     # Extrapolate to y=0
-    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     deriv = (integrand[1] - integrand[0]) / (y[1] - y[0])
     integrand_0 = deriv * (-y[0]) + integrand[0]
     integrand = torch.cat((integrand_0.unsqueeze(-1), integrand))
+    y = torch.cat((torch.tensor([0.0], dtype=dtype), y))
     V = np.pi * 2 * (1 - zs) * torch.trapz(integrand, y)
     assert not torch.isnan(V), (
         f'integrate_V_disconnected({zs}) = {V} for a = {a} b = {b}'
